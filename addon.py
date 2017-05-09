@@ -65,32 +65,6 @@ def proxy_request(url):
     return r
 
 
-def livestream_api_request(url, proxy=True):
-    if proxy:
-        r = proxy_request(url)
-    else:
-        r = requests.get(url)
-
-    json_obj = json.loads(r.text)
-    return json_obj
-
-
-def proxy_request(url):
-    r = session.post(BERNEX_PROXY + '/index.php',
-                     headers=HTTP_HEADERS,
-                     data={'q': url,
-                           'hl[include_form]': 'on',
-                           'hl[remove_scripts]': 'on',
-                           'hl[accept_cookies]': 'on',
-                           'hl[show_images]': 'on',
-                           'hl[show_referer]': 'on',
-                           'hl[base64_encode]': 'on',
-                           'hl[strip_meta]': 'on',
-                           'hl[session_cookies]': 'on',
-                           })
-    return r
-
-
 def grab_m3u8_master(event_id):
     url = '{0}/accounts/{1}/events/{2}'.format(LIVESTREAM_API, NRL_ACCOUNT_ID, event_id)
 
