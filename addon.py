@@ -35,8 +35,6 @@ HTTP_HEADERS = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
                 'Upgrade-Insecure-Requests': '1'}
 
-# Create a session object to store cookies
-session = requests.Session()
 
 
 def livestream_api_request(url, proxy=False):
@@ -50,9 +48,9 @@ def livestream_api_request(url, proxy=False):
 
 
 def proxy_request(url):
-    r = session.post(BERNEX_PROXY + '/index.php',
-                     headers=HTTP_HEADERS,
-                     data={'q': url,
+    r = requests.post(BERNEX_PROXY + '/index.php',
+                      headers=HTTP_HEADERS,
+                      data={'q': url,
                            'hl[include_form]': 'on',
                            'hl[remove_scripts]': 'on',
                            'hl[accept_cookies]': 'on',
