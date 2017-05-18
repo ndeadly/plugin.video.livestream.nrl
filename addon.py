@@ -9,6 +9,7 @@ from dateutil import tz
 import requests
 import m3u8
 
+import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
@@ -35,6 +36,9 @@ HTTP_HEADERS = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
                 'Upgrade-Insecure-Requests': '1'}
 
+
+def show_notification(msg, ms=3000):
+    xbmc.executebuiltin('Notification(%s, %s, %d)' % ('Livestream NRL', msg, ms))
 
 
 def livestream_api_request(url, proxy=False):
@@ -70,14 +74,17 @@ def grab_m3u8_master(event_id):
     r = proxy_request(url)
     js = json.loads(r.text)
     data = js['feed']['data']
+
     if len(data) > 0:
         for item in data:
             if item['type'] == 'video':
                 streams.append(item['data']['m3u8_url'])
 
-        return streams[0]
+        master_url = streams[0]
     else:
-        return js['stream_info']['m3u8_url']
+        master_url = js['stream_info']['m3u8_url']
+
+    return master_url
 
 
 def list_events():
@@ -231,6 +238,10 @@ def list_past_events(event_id=None):
 
 def play_stream(event_id):
     master_url = grab_m3u8_master(event_id)
+
+    if not master_url:
+        show_notification('Stream not available')
+        return
 
     r = proxy_request(master_url)
     m3u8_obj = m3u8.loads(r.text)
